@@ -3,4 +3,14 @@
 
     <string name="app_name">Tip Calculator</string>
 
+    <string name="pct_15">15 %</string>
+
+    <string name="pct_20">20 %</string>
+
+    <string name="pct_25">25 %</string>
+
+    <string name="amount_hint">Amount...</string>
+
+    <string name="tip_format">Tip is: $%1.2f</string>
+
 </resources>
