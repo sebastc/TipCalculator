@@ -69,6 +69,7 @@
         android:layout_toRightOf="@+id/bTipRate1"
         android:ems="10"
         android:inputType="number"
+        android:imeOptions="actionNext"
         android:visibility="gone" />
 
     <EditText
@@ -81,6 +82,7 @@
         android:layout_alignRight="@+id/bTipRate1"
         android:ems="10"
         android:inputType="number"
+        android:imeOptions="actionNext"
         android:visibility="gone" />
 
     <EditText
@@ -93,6 +95,7 @@
         android:layout_alignRight="@+id/bTipRate3"
         android:ems="10"
         android:inputType="number"
+        android:imeOptions="actionDone"
         android:visibility="gone" />
 
     <ImageButton

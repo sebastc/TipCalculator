@@ -1,5 +1,13 @@
 package com.yahoo.sebastc.tipcalculator;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,6 +20,10 @@ import android.widget.TextView;
 
 public class TipCalculatorActivity extends Activity {
 
+	private static final String CONFIG_KEY_TIP_RATE1 = "tipRate1";
+	private static final String CONFIG_KEY_TIP_RATE2 = "tipRate2";
+	private static final String CONFIG_KEY_TIP_RATE3 = "tipRate3";
+	private static final String CONFIG_FILE_NAME = "config.txt";
 	private EditText etAmount;
 	private EditText etTipRate1;
 	private EditText etTipRate2;
@@ -39,11 +51,10 @@ public class TipCalculatorActivity extends Activity {
 		bEditRates = (ImageButton) findViewById(R.id.bEditRates);
 		tvTip = (TextView) findViewById(R.id.tvTip);
 
-		tipRate1 = 15;
-		tipRate2 = 20;
-		tipRate3 = 25;
+		loadConfig();
 		currentTipRate = tipRate2;
-		
+		refreshUI();
+
 		etAmount = (EditText) findViewById(R.id.etAmount);
 		etAmount.addTextChangedListener(new TextWatcher() {
 
@@ -79,7 +90,8 @@ public class TipCalculatorActivity extends Activity {
 			@Override
 			public void afterTextChanged(Editable s) {
 				tipRate1 = parseInt(s.toString(), tipRate1);
-				bTipRate1.setText(getString(R.string.tip_button_format, tipRate1));
+				saveConfig();
+				refreshUI();
 			}
 		});
 		etTipRate2 = (EditText) findViewById(R.id.etTipRate2);
@@ -99,7 +111,8 @@ public class TipCalculatorActivity extends Activity {
 			@Override
 			public void afterTextChanged(Editable s) {
 				tipRate2 = parseInt(s.toString(), tipRate2);
-				bTipRate2.setText(getString(R.string.tip_button_format, tipRate2));
+				saveConfig();
+				refreshUI();
 			}
 		});
 		etTipRate3 = (EditText) findViewById(R.id.etTipRate3);
@@ -119,10 +132,56 @@ public class TipCalculatorActivity extends Activity {
 			@Override
 			public void afterTextChanged(Editable s) {
 				tipRate3 = parseInt(s.toString(), tipRate3);
-				bTipRate3.setText(getString(R.string.tip_button_format, tipRate3));
+				saveConfig();
+				refreshUI();
 			}
 		});
 		updateTip();
+	}
+
+	private void refreshUI() {
+		bTipRate1.setText(getString(R.string.tip_button_format,
+				tipRate1));
+		bTipRate2.setText(getString(R.string.tip_button_format,
+				tipRate2));
+		bTipRate3.setText(getString(R.string.tip_button_format,
+				tipRate3));
+	}
+
+	private void loadConfig() {
+		tipRate1 = 15;
+		tipRate2 = 20;
+		tipRate3 = 25;
+		try {
+			File configFile = new File(getFilesDir(), CONFIG_FILE_NAME);
+			if (configFile.exists()) {
+				String configStr = FileUtils.readFileToString(configFile);
+				JSONObject object = (JSONObject) new JSONTokener(configStr)
+						.nextValue();
+				tipRate1 = object.getInt(CONFIG_KEY_TIP_RATE1);
+				tipRate2 = object.getInt(CONFIG_KEY_TIP_RATE2);
+				tipRate3 = object.getInt(CONFIG_KEY_TIP_RATE3);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void saveConfig() {
+		try {
+			File configFile = new File(getFilesDir(), CONFIG_FILE_NAME);
+			JSONObject config = new JSONObject();
+			config.put(CONFIG_KEY_TIP_RATE1, tipRate1);
+			config.put(CONFIG_KEY_TIP_RATE2, tipRate2);
+			config.put(CONFIG_KEY_TIP_RATE3, tipRate3);
+			FileUtils.writeStringToFile(configFile, config.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void onTipRate1Click(View v) {
@@ -147,6 +206,7 @@ public class TipCalculatorActivity extends Activity {
 			etTipRate1.setVisibility(View.VISIBLE);
 			etTipRate2.setVisibility(View.VISIBLE);
 			etTipRate3.setVisibility(View.VISIBLE);
+			etTipRate1.requestFocus();
 		} else {
 			bEditRates.setImageResource(R.drawable.ic_edit);
 			bTipRate1.setVisibility(View.VISIBLE);
@@ -155,6 +215,7 @@ public class TipCalculatorActivity extends Activity {
 			etTipRate1.setVisibility(View.INVISIBLE);
 			etTipRate2.setVisibility(View.INVISIBLE);
 			etTipRate3.setVisibility(View.INVISIBLE);
+			etAmount.requestFocus();
 		}
 	}
 
