@@ -11,6 +11,8 @@
 
     <string name="amount_hint">Amount...</string>
 
-    <string name="tip_format">Tip is: $%1$1.2f at %2$1.0f %%</string>
+    <string name="tip_button_format">%1$1d %%</string>
+
+    <string name="tip_output_format">Tip is: $%1$1.2f at %2$1d %%</string>
 
 </resources>
