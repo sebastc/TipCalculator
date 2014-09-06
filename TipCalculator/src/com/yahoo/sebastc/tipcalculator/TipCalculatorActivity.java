@@ -1,9 +1,9 @@
 package com.yahoo.sebastc.tipcalculator;
 
-import java.text.MessageFormat;
-
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +16,7 @@ public class TipCalculatorActivity extends Activity {
 	private Button bPct20;
 	private Button bPct25;
 	private TextView tvTip;
-	private MessageFormat format;
+	private double currentTipRate;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,24 @@ public class TipCalculatorActivity extends Activity {
 		bPct25 = (Button) findViewById(R.id.bPct25);
 		tvTip = (TextView) findViewById(R.id.tvTip);
 		etAmount = (EditText) findViewById(R.id.etAmount);
-		updateTip(0);
+		etAmount.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				updateTip();
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+		});
+		currentTipRate = .20;
+		updateTip();
 	}
 
 	public void onPct15Click(View v) {
@@ -43,6 +60,11 @@ public class TipCalculatorActivity extends Activity {
 	}
 
 	private void updateTip(double pct) {
+		currentTipRate = pct;
+		updateTip();
+	}
+
+	private void updateTip() {
 		String amountStr = etAmount.getText().toString();
 		double amount = 0;
 		if (!amountStr.trim().isEmpty()) {
@@ -51,7 +73,7 @@ public class TipCalculatorActivity extends Activity {
 			} catch (NumberFormatException e) {
 			}
 		}
-		double tip = amount * pct;
-		tvTip.setText(getResources().getString(R.string.tip_format, tip));
+		double tip = amount * currentTipRate;
+		tvTip.setText(getResources().getString(R.string.tip_format, tip, currentTipRate*100));
 	}
 }
