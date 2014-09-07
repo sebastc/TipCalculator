@@ -16,6 +16,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RatingBar;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class TipCalculatorActivity extends Activity {
@@ -33,6 +37,9 @@ public class TipCalculatorActivity extends Activity {
 	private Button bTipRate3;
 	private ImageButton bEditRates;
 	private TextView tvTip;
+	private RelativeLayout rlTipRateButtons;
+	private SeekBar sbTipRate;
+	private RatingBar rbTipRate;
 
 	private int currentTipRate;
 	private int tipRate1;
@@ -136,16 +143,56 @@ public class TipCalculatorActivity extends Activity {
 				refreshUI();
 			}
 		});
+
+		sbTipRate = (SeekBar) findViewById(R.id.sbTipRate);
+		sbTipRate
+				.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+					@Override
+					public void onStopTrackingTouch(SeekBar seekBar) {
+					}
+
+					@Override
+					public void onStartTrackingTouch(SeekBar seekBar) {
+					}
+
+					@Override
+					public void onProgressChanged(SeekBar seekBar,
+							int progress, boolean fromUser) {
+						updateTip(progress);
+
+					}
+				});
+
+		rbTipRate = (RatingBar) findViewById(R.id.rbTipRate);
+		rbTipRate
+				.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+
+					@Override
+					public void onRatingChanged(RatingBar ratingBar,
+							float rating, boolean fromUser) {
+						updateTip(Math.round(rating * 10));
+					}
+				});
+
+		rlTipRateButtons = (RelativeLayout) findViewById(R.id.rlTipRateButtons);
+
+		((RadioButton) findViewById(R.id.rbButtons))
+		.setOnCheckedChangeListener(new VisibilityOnCheckedChangeListener(rlTipRateButtons));
+
+		((RadioButton) findViewById(R.id.rbRating))
+		.setOnCheckedChangeListener(new VisibilityOnCheckedChangeListener(rbTipRate));
+
+		((RadioButton) findViewById(R.id.rbSeekBar))
+		.setOnCheckedChangeListener(new VisibilityOnCheckedChangeListener(sbTipRate));
+
 		updateTip();
 	}
 
 	private void refreshUI() {
-		bTipRate1.setText(getString(R.string.tip_button_format,
-				tipRate1));
-		bTipRate2.setText(getString(R.string.tip_button_format,
-				tipRate2));
-		bTipRate3.setText(getString(R.string.tip_button_format,
-				tipRate3));
+		bTipRate1.setText(getString(R.string.tip_button_format, tipRate1));
+		bTipRate2.setText(getString(R.string.tip_button_format, tipRate2));
+		bTipRate3.setText(getString(R.string.tip_button_format, tipRate3));
 	}
 
 	private void loadConfig() {
@@ -228,6 +275,8 @@ public class TipCalculatorActivity extends Activity {
 		String amountStr = etAmount.getText().toString();
 		double amount = parseInt(amountStr, 0);
 		double tip = amount * currentTipRate / 100;
+		sbTipRate.setProgress(currentTipRate);
+		rbTipRate.setRating(currentTipRate / 10f);
 		tvTip.setText(getResources().getString(R.string.tip_output_format, tip,
 				currentTipRate));
 	}

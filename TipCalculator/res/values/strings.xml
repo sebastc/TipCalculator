@@ -15,4 +15,12 @@
 
     <string name="tip_output_format">Tip is: $%1$1.2f at %2$1d %%</string>
 
+    <string name="rb_buttons">Buttons</string>
+
+    <string name="rb_rating">Rating</string>
+
+    <string name="rb_seek_bar">Seek Bar</string>
+
+    <string name="edit_rates">Edit rates...</string>
+
 </resources>
